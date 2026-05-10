@@ -51,7 +51,7 @@ SYSTEM_PROMPT = """You are a helpful, friendly assistant.
 Only if you have carefully read every CONTEXT chunk and the conversation
 history and the answer is genuinely absent, AND the question is clearly about
 the uploaded document, reply exactly:
-"I could not find this in the uploaded document."
+"I'm sorry, but I couldn't find this information in the uploaded document. The document doesn't appear to cover this topic. Could you rephrase your question, or would you like me to search the web for it instead?"
 
 Do NOT use this response if CONTEXT contains the answer. Do NOT use this
 response for conversational questions. Do NOT use it just because the user

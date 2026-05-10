@@ -1,14 +1,27 @@
 import logging
+import os
 
 import httpx
 
 from langchain_core.tools import tool
-from duckduckgo_search import DDGS
+from tavily import TavilyClient
 
 
 log = logging.getLogger("chatbot.tools")
 
 MATHJS_API_URL = "https://api.mathjs.org/v4/"
+
+_tavily_client: TavilyClient | None = None
+
+
+def _get_tavily() -> TavilyClient:
+    global _tavily_client
+    if _tavily_client is None:
+        api_key = os.getenv("TAVILY_API_KEY")
+        if not api_key:
+            raise RuntimeError("TAVILY_API_KEY not set in environment")
+        _tavily_client = TavilyClient(api_key=api_key)
+    return _tavily_client
 
 
 @tool
@@ -39,17 +52,17 @@ def calculator(expression: str) -> str:
 
 @tool
 def web_search(query: str) -> str:
-    """Search the web with DuckDuckGo and return the top results.
+    """Search the web with Tavily and return the top results.
     Use this for questions about current events, news, or anything not in the
     uploaded document."""
     log.info("TOOL web_search | query=%r", query)
     try:
-        with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=5))
+        response = _get_tavily().search(query, max_results=5)
     except Exception as e:
         log.warning("TOOL web_search | error: %s", e)
         return f"Error performing web search: {e}"
 
+    results = response.get("results", []) if isinstance(response, dict) else []
     log.info("TOOL web_search | %d results", len(results))
     if not results:
         return "No results found."
@@ -57,9 +70,9 @@ def web_search(query: str) -> str:
     lines = []
     for i, r in enumerate(results, 1):
         title = r.get("title", "")
-        body = r.get("body", "")
-        href = r.get("href", "")
-        lines.append(f"{i}. {title}\n   {body}\n   {href}")
+        content = r.get("content", "")
+        url = r.get("url", "")
+        lines.append(f"{i}. {title}\n   {content}\n   {url}")
     return "\n".join(lines)
 
 
