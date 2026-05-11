@@ -162,18 +162,7 @@ See `.env.example` for the template.
 
 The same agent (`graph.py`) is exposed by two interfaces. Pick whichever fits your use case.
 
-### Option A — Streamlit UI (recommended for testing)
-
-```bash
-streamlit run app.py
-```
-
-- Opens at http://localhost:8501
-- Upload a document from the sidebar, then chat in the main area.
-- Tokens stream live with a cursor.
-- Each tool call is shown inline in a collapsible "wrench" panel with its inputs and outputs.
-
-### Option B — FastAPI (for programmatic use / SSE clients)
+### Option A — FastAPI (for programmatic use / SSE clients)
 
 ```bash
 uvicorn main:app --reload
@@ -184,6 +173,18 @@ uvicorn main:app --reload
 - See [REST API reference](#rest-api-reference) for the endpoints.
 
 You can run **either or both** — they share the same Chroma store and the same in-memory chat history (within one Python process).
+
+### Option B — Streamlit UI (recommended for testing)
+
+```bash
+streamlit run app.py
+```
+
+- Opens at http://localhost:8501
+- Upload a document from the sidebar, then chat in the main area.
+- Tokens stream live with a cursor.
+- Each tool call is shown inline in a collapsible "wrench" panel with its inputs and outputs.
+
 
 ---
 
